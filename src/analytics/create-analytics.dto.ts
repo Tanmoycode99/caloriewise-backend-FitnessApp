@@ -4,6 +4,7 @@ import {
   IsEnum,
   Min,
   Max,
+  Matches,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -19,18 +20,6 @@ export enum WeightGoalType {
   Maintain = 'maintain',
 }
 
-export enum StaminaLevel {
-  Low = 'Low',
-  Medium = 'Medium',
-  High = 'High',
-}
-
-export enum RiskLevel {
-  Low = 'Low',
-  Medium = 'Medium',
-  High = 'High',
-}
-
 export class CreateAnalyticsDto {
   @IsString()
   userId: string;
@@ -38,24 +27,30 @@ export class CreateAnalyticsDto {
   @IsString()
   name: string;
 
-  @IsNumber()
-  @Type(() => Number)
-  age: number;
+  // ✅ DOB (dd-mm-yyyy)
+  @IsString()
+  @Matches(/^\d{2}-\d{2}-\d{4}$/)
+  dob: string;
 
   @IsString()
   gender: string;
 
   @IsNumber()
-  @Min(30)
-  @Max(300)
   @Type(() => Number)
   weight: number;
 
+  // ✅ HEIGHT IN FEET & INCH
   @IsNumber()
-  @Min(100)
-  @Max(250)
+  @Min(3)
+  @Max(8)
   @Type(() => Number)
-  heightCm: number;
+  heightFeet: number;
+
+  @IsNumber()
+  @Min(0)
+  @Max(11)
+  @Type(() => Number)
+  heightInch: number;
 
   @IsString()
   activityLevel: string;

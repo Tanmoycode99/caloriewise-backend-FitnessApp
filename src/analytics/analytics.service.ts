@@ -1,18 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import {
-  CreateAnalyticsDto,
-  StaminaLevel,
-  RiskLevel,
-  YesOccasionallyNo,
-} from './create-analytics.dto';
+import { CreateAnalyticsDto } from './create-analytics.dto';
 import { Analytics, AnalyticsDocument } from './analytics.schema';
 
 type WeightProjection = {
   week: number;
   expectedWeight: number;
 };
+
+enum StaminaLevel {
+  Low = 'Low',
+  Medium = 'Medium',
+  High = 'High',
+}
+
+enum RiskLevel {
+  Low = 'Low',
+  Medium = 'Medium',
+  High = 'High',
+}
 
 @Injectable()
 export class AnalyticsService {
@@ -25,16 +32,35 @@ export class AnalyticsService {
     const {
       userId,
       name,
-      age,
+      dob,
       gender,
       weight,
-      heightCm,
+      heightFeet,
+      heightInch,
       activityLevel,
       smoking,
       alcohol,
       weightGoalType,
       weightGoalAmount,
     } = dto;
+
+    /* ---------- Convert DOB → Age ---------- */
+    const [day, month, year] = dob.split('-').map(Number);
+    const birthDate = new Date(year, month - 1, day);
+    const age =
+      new Date().getFullYear() -
+      birthDate.getFullYear() -
+      (new Date() <
+      new Date(
+        new Date().getFullYear(),
+        birthDate.getMonth(),
+        birthDate.getDate(),
+      )
+        ? 1
+        : 0);
+
+    /* ---------- Convert Height → CM ---------- */
+    const heightCm = (heightFeet * 30.48) + (heightInch * 2.54);
 
     /* ---------- BMI ---------- */
     const bmi = weight / Math.pow(heightCm / 100, 2);
@@ -44,9 +70,9 @@ export class AnalyticsService {
       10 * weight +
       6.25 * heightCm -
       5 * age +
-      (gender === 'Male' ? 5 : -161);
+      (gender.toLowerCase() === 'male' ? 5 : -161);
 
-    /* ---------- TDEE ---------- */
+    /* ---------- Activity Multiplier ---------- */
     let multiplier = 1.2;
     if (activityLevel === 'light') multiplier = 1.375;
     if (activityLevel === 'moderate') multiplier = 1.55;
@@ -128,11 +154,14 @@ export class AnalyticsService {
     const analyticsData = {
       userId,
       name,
+      dob,
       age,
       gender,
       bodyMetrics: {
         weight,
-        heightCm,
+        heightFeet,
+        heightInch,
+        heightCm: Number(heightCm.toFixed(1)),
         bmi: Number(bmi.toFixed(1)),
         bmr: Math.round(bmr),
         tdee,
@@ -155,7 +184,6 @@ export class AnalyticsService {
     };
 
     const saved = await this.analyticsModel.create(analyticsData);
-
     return saved;
   }
 }

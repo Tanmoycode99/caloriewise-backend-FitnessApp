@@ -16,16 +16,32 @@ export class Fitness extends Document {
   age: number;
 
   @Prop()
+  heightFeet: number;
+
+  @Prop()
+  heightInch: number;
+
+  @Prop()
   weightKg: number;
 
   @Prop()
-  heightCm: number;
+  bmi: number;
+
+  // ⭐ ADD THESE
+  @Prop()
+  bmr?: number;
+
+  @Prop()
+  tdeeWithoutExercise?: number;
+
+  @Prop()
+  tdeeWithExercise?: number;
 
   @Prop({ enum: ActivityLevelEnum })
   activityLevel: ActivityLevelEnum;
 
   @Prop({ enum: YesNoEnum })
-  exercise: YesNoEnum;
+  exercise?: YesNoEnum;
 
   @Prop({ enum: WeightGoalTypeEnum })
   weightGoalType: WeightGoalTypeEnum;
@@ -55,10 +71,10 @@ export class Fitness extends Document {
   caloriesRequired?: number;
 
   @Prop()
-  caloriesWithExercise?: number;
+  caloriesWithoutExercise?: number;
 
   @Prop()
-  caloriesWithoutExercise?: number;
+  caloriesWithExercise?: number;
 }
 
 export const FitnessSchema = SchemaFactory.createForClass(Fitness);

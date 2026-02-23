@@ -1,113 +1,143 @@
 import {
   IsString,
   IsNumber,
-  IsEnum,
   IsOptional,
-  IsArray,
+  IsEnum,
+  IsObject,
+  ValidateNested,
+  Min,
+  Max,
 } from 'class-validator';
-import {
-  GenderEnum,
-  WeightGoalTypeEnum,
-  ActivityLevelEnum,
-  YesNoEnum,
-} from '../enums/users.enums';
+import { Type } from 'class-transformer';
+
+export class LifestyleDto {
+  @IsString()
+  smoking: string;
+
+  @IsString()
+  alcohol: string;
+}
+
+export class SleepDto {
+  @IsString()
+  sleepHours: string;
+
+  @IsString()
+  sleepQuality: string;
+}
+
+export class SupplementDto {
+  @IsString()
+  usage: string;
+}
+
+export class StressSurveyDto {
+  @IsString()
+  energy: string;
+
+  @IsString()
+  water: string;
+
+  @IsString()
+  stress: string;
+}
+
+export class ResultSurveyDto {
+  @IsString()
+  resultSpeed: string;
+
+  @IsString()
+  motivation: string;
+}
 
 export class CreateUserDto {
-  /* ---------- BASIC INFO ---------- */
+  /* BASIC INFO */
 
   @IsString()
   name: string;
 
-  @IsEnum(GenderEnum)
-  gender: GenderEnum;
-
-  @IsNumber()
-  age: number;
-
-  @IsOptional()
-  @IsNumber()
-  weight?: number;
-
-  @IsNumber()
-  heightCm: number;
-
-  @IsOptional()
-  @IsNumber()
-  waist?: number;
-
-  /* ---------- GOAL ---------- */
-
-  @IsOptional()
   @IsString()
-  selectedGoal?: string;
+  gender: string;
 
-  /* ---------- WEIGHT GOAL ---------- */
-
-  @IsOptional()
-  @IsEnum(WeightGoalTypeEnum)
-  weightGoalType?: WeightGoalTypeEnum;
-
-  @IsOptional()
-  @IsNumber()
-  weightGoalAmount?: number;
-
-  /* ---------- ACTIVITY & HEALTH ---------- */
-
-  @IsOptional()
-  @IsEnum(ActivityLevelEnum)
-  activityLevel?: ActivityLevelEnum;
-
-  @IsOptional()
-  @IsArray()
-  healthIssues?: string[];
-
-  /* ---------- LIFESTYLE ---------- */
-
-  @IsOptional()
-  @IsEnum(YesNoEnum)
-  smoking?: YesNoEnum;
-
-  @IsOptional()
-  @IsEnum(YesNoEnum)
-  alcohol?: YesNoEnum;
-
-  /* ---------- SLEEP ---------- */
-
-  @IsOptional()
   @IsString()
-  sleepHours?: string;
+  dob: string;
 
-  @IsOptional()
-  @IsEnum(['poor', 'average', 'good'])
-  sleepQuality?: string;
-
-  /* ---------- DIET ---------- */
-
-  @IsOptional()
   @IsString()
-  dietType?: string;
+  heightFeet: string;
 
-  @IsOptional()
-  @IsEnum(YesNoEnum)
-  junkFood?: YesNoEnum;
+  @IsString()
+  heightInch: string;
 
-  @IsOptional()
-  @IsEnum(YesNoEnum)
-  sugaryDrinks?: YesNoEnum;
+  @IsString()
+  weight: string;
 
-  /* ---------- STRESS ---------- */
+  @IsString()
+  waist: string;
 
-  @IsOptional()
-  @IsEnum(['low', 'medium', 'high'])
-  stressLevel?: string;
+  /* DIET */
 
-  /* ---------- RESULT ---------- */
+  @IsString()
+  diet: string; // "Non vegetarian" (converted from characters)
 
-  @IsOptional()
-  @IsEnum(['fast', 'balanced', 'slow'])
-  resultSpeed?: string;
+  @IsString()
+  dietType: string;
 
-  @IsOptional()
-  @IsEnum(['low', 'medium', 'high'])
-  motivation?: string;
+  @IsString()
+  junkFood: string;
+
+  @IsString()
+  sugaryDrinks: string;
+
+  /* GOALS */
+
+  @IsString()
+  selectedGoal: string;
+
+  @IsString()
+  weightGoalType: string;
+
+  @IsString()
+  weightGoalAmount: string;
+
+  @IsString()
+  activityLevel: string;
+
+  @IsString()
+  healthIssue: string;
+
+  /* LIFESTYLE */
+
+  @ValidateNested()
+  @Type(() => LifestyleDto)
+  lifestyle: LifestyleDto;
+
+  @IsString()
+  smokingYears: string;
+
+  @IsString()
+  drinkingYears: string;
+
+  /* SLEEP */
+
+  @ValidateNested()
+  @Type(() => SleepDto)
+  sleep: SleepDto;
+
+  /* SUPPLEMENTS */
+
+  @ValidateNested()
+  @Type(() => SupplementDto)
+  supplement: SupplementDto;
+
+  /* STRESS SURVEY */
+
+  @ValidateNested()
+  @Type(() => StressSurveyDto)
+  stressSurvey: StressSurveyDto;
+
+  /* RESULT SURVEY */
+
+  @ValidateNested()
+  @Type(() => ResultSurveyDto)
+  resultSurvey: ResultSurveyDto;
 }

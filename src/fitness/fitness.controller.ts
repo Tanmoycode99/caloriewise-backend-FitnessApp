@@ -1,4 +1,4 @@
-import { Controller, Post, Param, Body } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { FitnessService } from './fitness.service';
 import { CreateFitnessDto } from './create-fitness.dto';
 
@@ -6,12 +6,8 @@ import { CreateFitnessDto } from './create-fitness.dto';
 export class FitnessController {
   constructor(private readonly fitnessService: FitnessService) {}
 
-  @Post(':userId')
-calculateFitness(
-  @Param('userId') userId: string,
-  @Body() dto: CreateFitnessDto
-)
- {
-    return this.fitnessService.calculate(userId, dto);
+  @Post()
+  calculateFitness(@Body() dto: CreateFitnessDto) {
+    return this.fitnessService.calculate(dto.userId, dto);
   }
 }

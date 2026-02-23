@@ -5,6 +5,7 @@ import {
   IsString,
   Min,
   Max,
+  Matches,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import {
@@ -17,10 +18,14 @@ import {
 export class CreateFitnessDto {
   /* ---------- BODY ---------- */
 
-  @IsNumber()
-  @Min(10)
-  @Max(120)
-  age: number;
+   @IsString()
+  userId: string;
+
+  @IsString()
+  @Matches(/^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$/, {
+    message: 'dob must be in DD-MM-YYYY format',
+  })
+  dob: string;
 
   @IsNumber()
   @Min(30)
@@ -28,17 +33,23 @@ export class CreateFitnessDto {
   weightKg: number;
 
   @IsNumber()
-  @Min(100)
-  @Max(250)
-  heightCm: number;
+  @Min(3)
+  @Max(8)
+  heightFeet: number;
+
+  @IsNumber()
+  @Min(0)
+  @Max(11)
+  heightInch: number;
 
   /* ---------- ACTIVITY ---------- */
 
   @IsEnum(ActivityLevelEnum)
   activityLevel: ActivityLevelEnum;
 
+  @IsOptional()   // ✅ now optional
   @IsEnum(YesNoEnum)
-  exercise: YesNoEnum;
+  exercise?: YesNoEnum;
 
   /* ---------- GOAL ---------- */
 
@@ -56,7 +67,7 @@ export class CreateFitnessDto {
 
   @IsOptional()
   @IsString()
-  dietType?: string; // veg | vegan | eggetarian | non-vegetarian
+  dietType?: string;
 
   /* ---------- LIFESTYLE ---------- */
 
